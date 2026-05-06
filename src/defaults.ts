@@ -49,3 +49,21 @@ export function resolvedDefaultKeys(
     (key) => env[key] === undefined || env[key] === ""
   );
 }
+
+/**
+ * Check whether all required keys are present and non-empty in the given env map.
+ * Throws an error listing any missing keys if validation fails.
+ */
+export function assertRequiredKeys(
+  env: Record<string, string>,
+  requiredKeys: string[]
+): void {
+  const missing = requiredKeys.filter(
+    (key) => env[key] === undefined || env[key] === ""
+  );
+  if (missing.length > 0) {
+    throw new Error(
+      `Missing required environment variable(s): ${missing.join(", ")}`
+    );
+  }
+}
