@@ -4,9 +4,10 @@ export { parseEnvFile, loadLayers } from './loader';
 export { resolveRef, interpolate, interpolateAll } from './interpolate';
 export { mergeLayers, mergeTwo, pickKeys, omitKeys } from './merge';
 export { buildLayerStack, createLayer } from './priority';
-export {
-  applyTransform,
-  applyTransforms,
-  transforms,
-} from './transform';
-export type { TransformFn, TransformMap } from './transform';
+export { applyTransform, applyTransforms } from './transform';
+export { watchEnvFiles } from './watch';
+export { takeSnapshot, diffSnapshots } from './snapshot';
+export { isSensitive, maskValue, maskEnv, maskKeys } from './mask';
+export { recordEvent, getAuditLog, clearAuditLog, filterAuditLog, auditSummary } from './audit';
+export { formatTimestamp, eventToRow, reportText, reportJson, reportCsv } from './auditReporter';
+export { encryptValue, decryptValue, encryptEnv, decryptEnv } from './encrypt';
