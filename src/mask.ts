@@ -61,3 +61,15 @@ export function maskKeys(
 ): Record<string, string> {
   return maskEnv(env, { ...options, sensitiveKeys: keys });
 }
+
+/**
+ * Returns an array of keys in `env` that would be masked given the provided options.
+ * Useful for auditing which variables are considered sensitive.
+ */
+export function getSensitiveKeys(
+  env: Record<string, string>,
+  options: Pick<MaskOptions, 'sensitiveKeys'> = {}
+): string[] {
+  const { sensitiveKeys = DEFAULT_SENSITIVE } = options;
+  return Object.keys(env).filter((key) => isSensitive(key, sensitiveKeys));
+}
