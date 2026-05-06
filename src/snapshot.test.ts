@@ -45,6 +45,15 @@ describe('takeSnapshot', () => {
     });
     expect(snap.resolved['NAME']).toBe('hello_world');
   });
+
+  it('timestamp is a recent unix millisecond value', () => {
+    const before = Date.now();
+    const file = writeTmp('snap-timestamp.env', 'KEY=value\n');
+    const snap = takeSnapshot({ files: [file] });
+    const after = Date.now();
+    expect(snap.timestamp).toBeGreaterThanOrEqual(before);
+    expect(snap.timestamp).toBeLessThanOrEqual(after);
+  });
 });
 
 describe('diffSnapshots', () => {
@@ -63,6 +72,13 @@ describe('diffSnapshots', () => {
     const fileB = writeTmp('diff-add-b.env', 'X=1\nY=2\n');
     const diff = diffSnapshots(takeSnapshot({ files: [fileA] }), takeSnapshot({ files: [fileB] }));
     expect(diff['Y']).toEqual({ before: undefined, after: '2' });
+  });
+
+  it('reports removed keys', () => {
+    const fileA = writeTmp('diff-rm-a.env', 'X=1\nZ=3\n');
+    const fileB = writeTmp('diff-rm-b.env', 'X=1\n');
+    const diff = diffSnapshots(takeSnapshot({ files: [fileA] }), takeSnapshot({ files: [fileB] }));
+    expect(diff['Z']).toEqual({ before: '3', after: undefined });
   });
 
   it('returns empty object when snapshots are identical', () => {
