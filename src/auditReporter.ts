@@ -62,3 +62,22 @@ export function generateReport(log: AuditLog, format: ReportFormat = 'text'): st
     default:     return reportText(log);
   }
 }
+
+/**
+ * Filters the audit log to events within the given time range and generates
+ * a report from the resulting subset. Both `from` and `to` are optional;
+ * omitting them falls back to the full log.
+ */
+export function generateReportForRange(
+  log: AuditLog,
+  format: ReportFormat = 'text',
+  from?: number,
+  to?: number
+): string {
+  const events = log.events.filter((e) => {
+    if (from !== undefined && e.timestamp < from) return false;
+    if (to !== undefined && e.timestamp > to) return false;
+    return true;
+  });
+  return generateReport({ ...log, events }, format);
+}
