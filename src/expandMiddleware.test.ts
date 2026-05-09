@@ -46,6 +46,12 @@ describe("createExpandMiddleware", () => {
     expect(result.VAL).toBe("fromprocess");
     delete process.env._MW_TEST;
   });
+
+  it("leaves unresolvable references unexpanded when fallback=false", () => {
+    const mw = createExpandMiddleware({ fallback: false });
+    const result = mw({ A: "$MISSING" }, identity);
+    expect(result.A).toBe("$MISSING");
+  });
 });
 
 describe("expandEnv", () => {
