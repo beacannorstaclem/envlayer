@@ -53,6 +53,24 @@ describe("validateEnv", () => {
     );
     expect(result.errors.some((e) => e.key === "LOG_LEVEL")).toBe(true);
   });
+
+  it("accepts valid LOG_LEVEL when present", () => {
+    const result = validateEnv(
+      { PORT: "3000", NODE_ENV: "test", LOG_LEVEL: "debug" },
+      schema
+    );
+    expect(result.errors.some((e) => e.key === "LOG_LEVEL")).toBe(false);
+    expect(result.valid).toBe(true);
+  });
+
+  it("accumulates multiple errors at once", () => {
+    const result = validateEnv({ PORT: "abc", NODE_ENV: "staging", API_KEY: "x" }, schema);
+    const keys = result.errors.map((e) => e.key);
+    expect(keys).toContain("PORT");
+    expect(keys).toContain("NODE_ENV");
+    expect(keys).toContain("API_KEY");
+    expect(result.valid).toBe(false);
+  });
 });
 
 describe("assertEnv", () => {
