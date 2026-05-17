@@ -21,11 +21,16 @@ export interface EnvRequest {
 /**
  * Creates middleware that scopes the request env to a given namespace prefix.
  * The resolved env on the request will only contain the stripped keys.
+ * Namespaced keys take precedence over global keys when `includeGlobal` is true.
  */
 export function createNamespaceMiddleware(
   options: NamespaceMiddlewareOptions
 ) {
   const { prefix, includeGlobal = false } = options;
+
+  if (!prefix || prefix.trim() === '') {
+    throw new Error('NamespaceMiddleware: prefix must be a non-empty string');
+  }
 
   return function namespaceMiddleware(req: EnvRequest, next: NextFn): void {
     const namespaced = extractNamespace(req.env, prefix);
@@ -48,6 +53,10 @@ export function createNamespaceMiddleware(
  * Re-namespace: take resolved keys and re-attach a prefix before passing on.
  */
 export function createRenamespacingMiddleware(prefix: string) {
+  if (!prefix || prefix.trim() === '') {
+    throw new Error('RenamespacingMiddleware: prefix must be a non-empty string');
+  }
+
   return function renamespacingMiddleware(req: EnvRequest, next: NextFn): void {
     if (req.resolved) {
       req.resolved = addNamespace(req.resolved, prefix);
